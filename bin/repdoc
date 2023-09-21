@@ -1,0 +1,33 @@
+#!/usr/bin/env php
+<?php declare(strict_types=1);
+
+if (!class_exists('s9e\\REPdoc\\Patch'))
+{
+	if (file_exists(__DIR__ . '/../../../autoload.php'))
+	{
+		include __DIR__ . '/../../../autoload.php';
+	}
+	elseif (file_exists(__DIR__ . '/../vendor/autoload.php'))
+	{
+		include __DIR__ . '/../vendor/autoload.php';
+	}
+	else
+	{
+		echo "Cannot find autoload.php\n";
+
+		exit(1);
+	}
+}
+
+$version = '@git_tag@';
+if ($version[0] === '@')
+{
+	$version = Composer\InstalledVersions::getPrettyVersion('s9e/repdoc');
+}
+
+$command = new s9e\REPdoc\Patch;
+
+$app = new Symfony\Component\Console\Application($command->getName(), $version);
+$app->add($command);
+$app->setDefaultCommand($command->getName(), true);
+$app->run();
