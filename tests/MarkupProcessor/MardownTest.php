@@ -9,7 +9,7 @@ use s9e\REPdoc\EvalImplementation\EvalInterface;
 use s9e\REPdoc\MarkupProcessor\Markdown;
 
 /**
-* @covers s9e\REPdoc\MarkupProcessor\Mardown
+* @covers s9e\REPdoc\MarkupProcessor\Markdown
 */
 class MardownTest extends TestCase
 {

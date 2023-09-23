@@ -13,9 +13,16 @@ class NativeEval implements EvalInterface
 {
 	public function __invoke(string $code): string
 	{
-		ob_start();
-		eval($code);
+		try
+		{
+			ob_start();
+			eval($code);
+		}
+		finally
+		{
+			$output = ob_get_clean();
+		}
 
-		return ob_get_clean();
+		return $output;
 	}
 }
