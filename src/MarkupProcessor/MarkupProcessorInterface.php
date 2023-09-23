@@ -7,19 +7,12 @@
 */
 namespace s9e\REPdoc\MarkupProcessor;
 
-use function eval, ob_get_clean, ob_start;
-use s9e\REPdoc\Eval\EvalInterface;
+use s9e\REPdoc\EvalImplementation\EvalInterface;
 
 interface MarkupProcessorInterface
 {
 	/**
-	* Process all the code blocks in given text, evaluate them, then patch the output
-	*
-	* @param  string $text Input text
-	* @param  Eval   $eval
-	* @return void
+	* Process all the code blocks in given text, evaluate them, then patch the output into the text
 	*/
-	public function process(string $text, EvalInterface $eval): string
-	{
-	}
+	public function process(string $text, EvalInterface $eval): string;
 }
