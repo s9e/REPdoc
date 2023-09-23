@@ -5,7 +5,7 @@
 * @copyright Copyright (c) The s9e authors
 * @license   http://www.opensource.org/licenses/mit-license.php The MIT License
 */
-namespace s9e\REPdoc;
+namespace s9e\REPdoc\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -32,7 +32,8 @@ class Patch extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$output->write(var_export($input->getOption('recursive'), true));
+		$recursive = (bool) $input->getOption('recursive');
+		$targets   = (array) $input->getArgument('targets');
 
 		return Command::SUCCESS;
 	}
