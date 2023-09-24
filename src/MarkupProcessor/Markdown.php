@@ -12,6 +12,11 @@ use s9e\REPdoc\EvalImplementation\EvalInterface;
 
 class Markdown implements MarkupProcessorInterface
 {
+	public function getSupportedFileExtensions(): array
+	{
+		return ['md' => 0];
+	}
+
 	public function process(string $text, EvalInterface $eval): string
 	{
 		return preg_replace_callback(

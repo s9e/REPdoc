@@ -11,6 +11,16 @@ use s9e\REPdoc\EvalImplementation\EvalInterface;
 
 interface MarkupProcessorInterface
 {
+
+	/**
+	* Return the list of supported file extensions and their score
+	*
+	* A higher score means this processor is better suited for handling this type of files
+	*
+	* @return array<string, int>
+	*/
+	public function getSupportedFileExtensions(): array;
+
 	/**
 	* Process all the code blocks in given text, evaluate them, then patch the output into the text
 	*/

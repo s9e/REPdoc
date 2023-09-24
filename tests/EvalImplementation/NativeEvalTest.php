@@ -12,6 +12,12 @@ use s9e\REPdoc\EvalImplementation\EvalInterface;
 */
 class NativeEvalTest extends TestCase
 {
+	public function testError()
+	{
+		$this->expectException('ArgumentCountError');
+		(new NativeEval)('substr();');
+	}
+
 	#[DataProvider('getNativeEvalTests')]
 	public function testEval(string $code, string $expected)
 	{
