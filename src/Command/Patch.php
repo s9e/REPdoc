@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use s9e\REPdoc\EvalImplementation\NativeEval;
+use s9e\REPdoc\EvalImplementation\SymfonyProcess;
 use s9e\REPdoc\Filesystem;
 use s9e\REPdoc\MarkupProcessorRepository;
 use s9e\REPdoc\MarkupProcessor\Markdown;
@@ -25,6 +26,14 @@ class Patch extends Command
 {
 	protected function configure(): void
 	{
+		$this->addOption(
+			'process-isolation',
+			null,
+			InputOption::VALUE_NEGATABLE,
+			'Whether to execute the PHP code in its own process',
+			false
+		);
+
 		$this->addOption(
 			'recursive',
 			null,
@@ -41,7 +50,7 @@ class Patch extends Command
 		$recursive = (bool) $input->getOption('recursive');
 		$targets   = (array) $input->getArgument('targets');
 
-		$eval       = new NativeEval;
+		$eval       = $input->getOption('process-isolation') ? new SymfonyProcess : new NativeEval;
 		$filesystem = new Filesystem;
 		$repository = new MarkupProcessorRepository([new Markdown]);
 		$patcher    = new Patcher(
