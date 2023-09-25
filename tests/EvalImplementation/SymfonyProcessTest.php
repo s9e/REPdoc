@@ -3,20 +3,21 @@
 namespace s9e\REPdoc\Tests\EvalImplementation;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use s9e\REPdoc\EvalImplementation\EvalInterface;
-use s9e\REPdoc\EvalImplementation\NativeEval;
+use s9e\REPdoc\EvalImplementation\SymfonyProcess;
 
-#[CoversClass('s9e\REPdoc\EvalImplementation\NativeEval')]
-class NativeEvalTest extends AbstractEvalTestCase
+#[CoversClass('s9e\REPdoc\EvalImplementation\SymfonyProcess')]
+class SymfonyProcessTest extends AbstractEvalTestCase
 {
 	protected function getEvalImplementation(): EvalInterface
 	{
-		return new NativeEval;
+		return new SymfonyProcess;
 	}
 
 	public function testError()
 	{
-		$this->expectException('ArgumentCountError');
+		$this->expectException(ProcessFailedException::class);
 		$this->getEvalImplementation()('substr();');
 	}
 }

@@ -2,15 +2,13 @@
 
 namespace s9e\REPdoc\Tests;
 
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use s9e\REPdoc\Filesystem;
 
-/**
-* @covers s9e\REPdoc\Filesystem
-*/
+#[CoversClass('s9e\REPdoc\Filesystem')]
 class FilesystemTest extends TestCase
 {
 	protected $filesystem;

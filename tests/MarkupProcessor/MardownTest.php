@@ -2,17 +2,21 @@
 
 namespace s9e\REPdoc\Tests\MarkupProcessor;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use s9e\REPdoc\EvalImplementation\NativeEval;
 use s9e\REPdoc\EvalImplementation\EvalInterface;
 use s9e\REPdoc\MarkupProcessor\Markdown;
 
-/**
-* @covers s9e\REPdoc\MarkupProcessor\Markdown
-*/
+#[CoversClass('s9e\REPdoc\MarkupProcessor\Markdown')]
 class MardownTest extends TestCase
 {
+	public function testSupportsFileExtension()
+	{
+		$this->assertArrayHasKey('md', (new Markdown)->getSupportedFileExtensions());
+	}
+
 	#[DataProvider('getMarkdownTests')]
 	public function testProcess(string $original, string $expected, EvalInterface $eval = new NativeEval)
 	{
