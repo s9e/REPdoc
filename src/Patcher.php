@@ -7,11 +7,14 @@
 */
 namespace s9e\REPdoc;
 
+use s9e\REPdoc\EvalImplementation\EvalInterface;
+
 class Patcher
 {
 	public function __construct(
-		public Filesystem                $filesystem          = new Filesystem
-		public MarkupProcessorRepository $processorRepository = new MarkupProcessorRepository
+		public EvalInterface             $eval,
+		public Filesystem                $filesystem,
+		public MarkupProcessorRepository $processorRepository
 	)
 	{
 	}
@@ -23,14 +26,14 @@ class Patcher
 	public function patchFile(string $path): bool
 	{
 		$ext       = $this->filesystem->getFileExtension($path);
-		$processor = $this->processorRepository->getByFileExtension($ext);
+		$processor = $this->processorRepository->getProcessorForFileExtension($ext);
 		if ($processor === false)
 		{
 			return false;
 		}
 
 		$old = $this->filesystem->read($path);
-		$new = $processor->process($old);
+		$new = $processor->process($old, $this->eval);
 		if ($old === $new)
 		{
 			return false;

@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use s9e\REPdoc\EvalImplementation\NativeEval;
 use s9e\REPdoc\Filesystem;
 use s9e\REPdoc\MarkupProcessorRepository;
 use s9e\REPdoc\MarkupProcessor\Markdown;
@@ -40,9 +41,14 @@ class Patch extends Command
 		$recursive = (bool) $input->getOption('recursive');
 		$targets   = (array) $input->getArgument('targets');
 
+		$eval       = new NativeEval;
 		$filesystem = new Filesystem;
 		$repository = new MarkupProcessorRepository([new Markdown]);
-		$patcher    = new Patcher(filesystem: $filesystem, processorRepository: $repository);
+		$patcher    = new Patcher(
+			eval:                $eval,
+			filesystem:          $filesystem,
+			processorRepository: $repository
+		);
 
 		$extensions = $repository->getSupportedFileExtensions();
 		$paths      = [];

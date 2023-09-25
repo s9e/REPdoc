@@ -50,7 +50,7 @@ class Filesystem
 			);
 		}
 
-		return $this->filterFileExtensions($paths);
+		return $this->filterFileExtensions($paths, $extensions);
 	}
 
 	public function read(string $path): string
