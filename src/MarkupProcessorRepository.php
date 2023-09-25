@@ -8,7 +8,7 @@
 namespace s9e\REPdoc;
 
 use InvalidArgumentException;
-use function usort;
+use function array_keys, ksort, usort;
 use s9e\REPdoc\MarkupProcessor\MarkupProcessorInterface;
 
 class MarkupProcessorRepository
@@ -44,5 +44,19 @@ class MarkupProcessorRepository
 
 			$this->processors[$ext] = $processors[0]['processor'];
 		}
+		ksort($this->processors);
+	}
+
+	public function getProcessorForFileExtension(string $ext): MarkupProcessorInterface|false
+	{
+		return $this->processors[$ext] ?? false;
+	}
+
+	/**
+	* @return string[]
+	*/
+	public function getSupportedFileExtensions(): array
+	{
+		return array_keys($this->processors);
 	}
 }

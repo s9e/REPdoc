@@ -9,10 +9,15 @@ namespace s9e\REPdoc\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use s9e\REPdoc\Filesystem;
+use s9e\REPdoc\MarkupProcessorRepository;
+use s9e\REPdoc\MarkupProcessor\Markdown;
+use s9e\REPdoc\Patcher;
 
 #[AsCommand(name: 'repdoc:patch', description: 'Patches target files and directories')]
 class Patch extends Command
@@ -34,6 +39,25 @@ class Patch extends Command
 	{
 		$recursive = (bool) $input->getOption('recursive');
 		$targets   = (array) $input->getArgument('targets');
+
+		$filesystem = new Filesystem;
+		$repository = new MarkupProcessorRepository([new Markdown]);
+		$patcher    = new Patcher(filesystem: $filesystem, processorRepository: $repository);
+
+		$extensions = $repository->getSupportedFileExtensions();
+		$paths      = [];
+		foreach ($targets as $target)
+		{
+			foreach ($filesystem->getFilepaths($target, $extensions, $recursive) as $path)
+			{
+				$paths[] = $path;
+			}
+		}
+
+		foreach ($paths as $path)
+		{
+			$patcher->patchFile($path);
+		}
 
 		return Command::SUCCESS;
 	}
