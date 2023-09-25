@@ -40,14 +40,14 @@ class Filesystem
 		}
 		elseif (is_dir($path) && $recursive)
 		{
-			return iterator_to_array(
+			$paths = array_values(iterator_to_array(
 				new RecursiveIteratorIterator(
 					new RecursiveDirectoryIterator(
 						$path,
 						FilesystemIterator::CURRENT_AS_PATHNAME | FilesystemIterator::SKIP_DOTS
 					)
 				)
-			);
+			));
 		}
 
 		return $this->filterFileExtensions($paths, $extensions);
@@ -73,9 +73,11 @@ class Filesystem
 	*/
 	protected function filterFileExtensions(array $paths, array $extensions): array
 	{
-		return array_filter(
-			$paths,
-			fn ($path) => in_array($this->getFileExtension($path), $extensions, true)
+		return array_values(
+			array_filter(
+				$paths,
+				fn ($path) => in_array($this->getFileExtension($path), $extensions, true)
+			)
 		);
 	}
 }
