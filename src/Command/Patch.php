@@ -9,11 +9,11 @@ namespace s9e\REPdoc\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use s9e\REPdoc\EvalImplementation\NativeEval;
 use s9e\REPdoc\Filesystem;
 use s9e\REPdoc\MarkupProcessorRepository;
@@ -60,9 +60,14 @@ class Patch extends Command
 			}
 		}
 
-		foreach ($paths as $path)
+		$changed = [];
+		$io      = new SymfonyStyle($input, $output);
+		foreach ($io->progressIterate($paths) as $path)
 		{
-			$patcher->patchFile($path);
+			if ($patcher->patchFile($path))
+			{
+				$changed[] = $path;
+			}
 		}
 
 		return Command::SUCCESS;
