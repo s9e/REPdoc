@@ -12,7 +12,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
 use const PATHINFO_EXTENSION;
-use function array_filter, file_get_contents, file_put_contents, in_array, is_dir, is_file, iterator_to_array, pathinfo;
+use function array_filter, array_values, file_get_contents, file_put_contents, in_array, is_dir, is_file, iterator_to_array, pathinfo;
 
 /**
 * This is a thin wrapper around PHP's file functions. It could theoretically be replaced with an

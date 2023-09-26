@@ -11,7 +11,6 @@ use s9e\REPdoc\EvalImplementation\EvalInterface;
 
 interface MarkupProcessorInterface
 {
-
 	/**
 	* Return the list of supported file extensions and their score
 	*

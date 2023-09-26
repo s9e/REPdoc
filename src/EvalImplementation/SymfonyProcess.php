@@ -9,6 +9,7 @@ namespace s9e\REPdoc\EvalImplementation;
 
 use RuntimeException;
 use Symfony\Component\Process\PhpProcess;
+use function class_exists;
 
 class SymfonyProcess implements EvalInterface
 {
