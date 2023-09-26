@@ -8,7 +8,8 @@
 namespace s9e\REPdoc;
 
 use InvalidArgumentException;
-use function array_keys, ksort, usort;
+use const SORT_NUMERIC;
+use function array_keys, end, ksort, usort;
 use s9e\REPdoc\MarkupProcessor\MarkupProcessorInterface;
 
 class MarkupProcessorRepository
@@ -16,7 +17,7 @@ class MarkupProcessorRepository
 	/**
 	* @var array<string, MarkupProcessorInterface> Processor for each supported file extension
 	*/
-	public array $processors = [];
+	protected array $processors = [];
 
 	/**
 	* @param MarkupProcessorInterface[] $processors
@@ -33,16 +34,16 @@ class MarkupProcessorRepository
 
 			foreach ($processor->getSupportedFileExtensions() as $ext => $score)
 			{
-				$filetypes[$ext][] = ['score' => (int) $score, 'processor' => $processor];
+				$filetypes[$ext][$score] = $processor;
 			}
 		}
 
 		foreach ($filetypes as $ext => $processors)
 		{
-			// Sort by descending score, then use the highest scored processor
-			usort($processors, fn($a, $b) => $b['score'] - $a['score']);
+			// Sort processors by score ascending, then grab the last one
+			ksort($processors, SORT_NUMERIC);
 
-			$this->processors[$ext] = $processors[0]['processor'];
+			$this->processors[$ext] = end($processors);
 		}
 		ksort($this->processors);
 	}
