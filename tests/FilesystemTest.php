@@ -37,6 +37,19 @@ class FilesystemTest extends TestCase
 		);
 	}
 
+	public function testGetFilepathsDirNoRecursive()
+	{
+		vfsStream::setup('root');
+		touch(vfsStream::url('root/foo.txt'));
+		touch(vfsStream::url('root/bar.md'));
+		touch(vfsStream::url('root/baz.rst'));
+
+		$this->assertEquals(
+			[],
+			$this->filesystem->getFilepaths(vfsStream::url('root'), ['md', 'rst'], false)
+		);
+	}
+
 	public function testGetFilepathsFile()
 	{
 		vfsStream::setup('root');
@@ -47,6 +60,15 @@ class FilesystemTest extends TestCase
 		$this->assertEquals(
 			[vfsStream::url('root/bar.md')],
 			$this->filesystem->getFilepaths(vfsStream::url('root/bar.md'), ['md', 'rst'], true)
+		);
+	}
+
+	public function testGetFilepathsInexistent()
+	{
+		vfsStream::setup('root');
+		$this->assertEquals(
+			[],
+			$this->filesystem->getFilepaths(vfsStream::url('root/bar/'), ['md', 'rst'], true)
 		);
 	}
 

@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Process\PhpProcess;
 use s9e\REPdoc\EvalImplementation\NativeEval;
 use s9e\REPdoc\EvalImplementation\SymfonyProcess;
 use s9e\REPdoc\Filesystem;
@@ -47,10 +48,18 @@ class Patch extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$recursive = (bool) $input->getOption('recursive');
-		$targets   = (array) $input->getArgument('targets');
+		$recursive        = (bool) $input->getOption('recursive');
+		$targets          = (array) $input->getArgument('targets');
+		$processIsolation = (bool) $input->getOption('process-isolation');
 
-		$eval       = $input->getOption('process-isolation') ? new SymfonyProcess : new NativeEval;
+		if ($processIsolation && !class_exists(PhpProcess::class))
+		{
+			$output->writeln('<error>Cannot use process isolation, make sure symfony/process is installed</error>');
+
+			return Command::FAILURE;
+		}
+
+		$eval       = $processIsolation ? new SymfonyProcess : new NativeEval;
 		$filesystem = new Filesystem;
 		$repository = new MarkupProcessorRepository([new Markdown]);
 		$patcher    = new Patcher(
