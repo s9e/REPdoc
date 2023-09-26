@@ -14,9 +14,34 @@ class SymfonyProcess implements EvalInterface
 {
 	public function __invoke(string $code): string
 	{
-		$process = new PhpProcess('<?php ' . $code);
+		// Try to locate autoload.php so we can include it before any code
+		$path = $this->getAutoloadPath();
+		if ($path)
+		{
+			$code = 'include ' . var_export($path, true) . ";\n" . $code;
+		}
+
+
+		$process = new PhpProcess("<?php\n" . $code);
 		$process->mustRun();
 
 		return $process->getOutput();
+	}
+
+	protected function getAutoloadPath(): ?string
+	{
+		$paths = [
+			__DIR__ . '/../../vendor/autoload.php',
+			__DIR__ . '/../../autoload.php'
+		];
+		foreach ($paths as $path)
+		{
+			if (file_exists($path))
+			{
+				return realpath($path);
+			}
+		}
+
+		return null;
 	}
 }

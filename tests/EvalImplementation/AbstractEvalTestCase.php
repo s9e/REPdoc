@@ -31,6 +31,10 @@ abstract class AbstractEvalTestCase extends TestCase
 				'echo "Hello world.";',
 				'Hello world.'
 			],
+			[
+				'var_dump(class_exists(' . var_export(__CLASS__, true) . '));',
+				"bool(true)\n"
+			],
 		];
 	}
 }
