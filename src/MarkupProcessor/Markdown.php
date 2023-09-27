@@ -20,8 +20,8 @@ class Markdown implements MarkupProcessorInterface
 	public function process(string $text, EvalInterface $eval): string
 	{
 		return preg_replace_callback(
-			'(^((```++|~~~++)php\\n(.*?)^\\2\\n(```++|~~~++)\\w*+\\n).*?^\\4(?!\\N))ms',
-			fn (array $m) => $m[1] . $eval($m[3]) . "\n" . $m[4],
+			'(^(```+|~~~+)php\\n((?:(?!\\1)\\N*\\n)*+)\\1\\n((?1))\\w*\\n\\K.*?^\\3(?!\\N))ms',
+			fn (array $m) => $eval($m[2]) . "\n" . $m[3],
 			$text
 		);
 	}
