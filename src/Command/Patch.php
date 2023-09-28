@@ -83,7 +83,9 @@ class Patch extends Command
 		);
 
 		$extensions = $repository->getSupportedFileExtensions();
-		$paths      = [];
+		$io->writeln('Supported file extensions: ' . implode(', ', $extensions), OutputInterface::VERBOSITY_VERBOSE);
+
+		$paths = [];
 		foreach ($targets as $target)
 		{
 			$io->writeln('Looking for supported files in ' . $target);
