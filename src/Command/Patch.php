@@ -27,8 +27,12 @@ use s9e\REPdoc\Patcher;
 #[AsCommand(name: 'repdoc:patch', description: 'Patches target files and directories')]
 class Patch extends Command
 {
+	protected bool $hasSymfonyProcess;
+
 	protected function configure(): void
 	{
+		$this->hasSymfonyProcess = class_exists(PhpProcess::class);
+
 		$this->addOption(
 			'process-isolation',
 			null,
@@ -50,13 +54,20 @@ class Patch extends Command
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
+		$io               = new SymfonyStyle($input, $output);
 		$recursive        = (bool) $input->getOption('recursive');
 		$targets          = (array) $input->getArgument('targets');
 		$processIsolation = (bool) $input->getOption('process-isolation');
 
-		if ($processIsolation && !class_exists(PhpProcess::class))
+		if (empty($targets))
 		{
-			$output->writeln('<error>Cannot use process isolation, make sure symfony/process is installed</error>');
+			$io->error('No targets provided');
+
+			return Command::FAILURE;
+		}
+		if ($processIsolation && !$this->hasSymfonyProcess)
+		{
+			$io->error('Cannot use process isolation, make sure symfony/process is installed');
 
 			return Command::FAILURE;
 		}
@@ -81,7 +92,6 @@ class Patch extends Command
 		}
 
 		$changed = [];
-		$io      = new SymfonyStyle($input, $output);
 		foreach ($io->progressIterate($paths) as $path)
 		{
 			if ($patcher->patchFile($path))
