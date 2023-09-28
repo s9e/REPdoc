@@ -7,6 +7,7 @@
 */
 namespace s9e\REPdoc\EvalImplementation;
 
+use ParseError ;
 use function ob_get_clean, ob_start;
 
 class NativeEval implements EvalInterface

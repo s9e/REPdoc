@@ -9,6 +9,7 @@ namespace s9e\REPdoc\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -58,6 +59,7 @@ class Patch extends Command
 		$recursive        = (bool) $input->getOption('recursive');
 		$targets          = (array) $input->getArgument('targets');
 		$processIsolation = (bool) $input->getOption('process-isolation');
+		$io               = new SymfonyStyle($input, $output);
 
 		if (empty($targets))
 		{
@@ -85,20 +87,45 @@ class Patch extends Command
 		$paths      = [];
 		foreach ($targets as $target)
 		{
-			foreach ($filesystem->getFilepaths($target, $extensions, $recursive) as $path)
+			$output->writeln('Looking for supported files in ' . $target);
+			$targetFilepaths = $filesystem->getFilepaths($target, $extensions, $recursive);
+			$output->writeln('Files found: ' . count($targetFilepaths));
+			$paths = array_merge($paths, $targetFilepaths);
+
+			if ($output->isVerbose())
 			{
-				$paths[] = $path;
+				foreach ($targetFilepaths as $path)
+				{
+					$output->writeln('Found ' . $path, OutputInterface::VERBOSITY_VERBOSE);
+				}
 			}
 		}
 
+		$infoSection = $output->section();
+		$infoSection->setMaxHeight(1);
+
+		$progressSection = $output->section();
+		$progressBar     = new ProgressBar($progressSection);
+		$progressBar->start(count($paths));
+
 		$changed = [];
-		foreach ($io->progressIterate($paths) as $path)
+		foreach ($paths as $path)
 		{
+			$infoSection->writeln('Patching ' . $path);
 			if ($patcher->patchFile($path))
 			{
 				$changed[] = $path;
+				$infoSection->writeln('Updated ' . $path, OutputInterface::VERBOSITY_VERBOSE);
 			}
+			else
+			{
+				$infoSection->writeln('Skipped ' . $path, OutputInterface::VERBOSITY_VERBOSE);
+			}
+			$progressBar->advance();
 		}
+
+		$output->writeln('Files patched: ' . count($changed));
+
 
 		return Command::SUCCESS;
 	}
