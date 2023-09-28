@@ -20,6 +20,7 @@ use s9e\REPdoc\EvalImplementation\NativeEval;
 use s9e\REPdoc\EvalImplementation\SymfonyProcess;
 use s9e\REPdoc\Filesystem;
 use s9e\REPdoc\MarkupProcessorRepository;
+use s9e\REPdoc\MarkupProcessor\Html;
 use s9e\REPdoc\MarkupProcessor\Markdown;
 use s9e\REPdoc\Patcher;
 
@@ -32,7 +33,7 @@ class Patch extends Command
 			'process-isolation',
 			null,
 			InputOption::VALUE_NEGATABLE,
-			'Whether to execute the PHP code in its own process',
+			'Whether to execute the PHP code in its own process (requires symfony/process)',
 			false
 		);
 
@@ -62,7 +63,7 @@ class Patch extends Command
 
 		$eval       = $processIsolation ? new SymfonyProcess : new NativeEval;
 		$filesystem = new Filesystem;
-		$repository = new MarkupProcessorRepository([new Markdown]);
+		$repository = new MarkupProcessorRepository([new Html, new Markdown]);
 		$patcher    = new Patcher(
 			evalImplementation:  $eval,
 			filesystem:          $filesystem,
