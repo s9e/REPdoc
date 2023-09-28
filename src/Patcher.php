@@ -12,7 +12,7 @@ use s9e\REPdoc\EvalImplementation\EvalInterface;
 class Patcher
 {
 	public function __construct(
-		public EvalInterface             $eval,
+		public EvalInterface             $evalImplementation,
 		public Filesystem                $filesystem,
 		public MarkupProcessorRepository $processorRepository
 	)
@@ -33,7 +33,7 @@ class Patcher
 		}
 
 		$old = $this->filesystem->read($path);
-		$new = $processor->process($old, $this->eval);
+		$new = $processor->process($old, $this->evalImplementation);
 		if ($old === $new)
 		{
 			return false;

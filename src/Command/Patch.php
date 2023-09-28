@@ -64,7 +64,7 @@ class Patch extends Command
 		$filesystem = new Filesystem;
 		$repository = new MarkupProcessorRepository([new Markdown]);
 		$patcher    = new Patcher(
-			eval:                $eval,
+			evalImplementation:  $eval,
 			filesystem:          $filesystem,
 			processorRepository: $repository
 		);
