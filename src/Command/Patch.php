@@ -59,7 +59,6 @@ class Patch extends Command
 		$recursive        = (bool) $input->getOption('recursive');
 		$targets          = (array) $input->getArgument('targets');
 		$processIsolation = (bool) $input->getOption('process-isolation');
-		$io               = new SymfonyStyle($input, $output);
 
 		if (empty($targets))
 		{
@@ -87,16 +86,16 @@ class Patch extends Command
 		$paths      = [];
 		foreach ($targets as $target)
 		{
-			$output->writeln('Looking for supported files in ' . $target);
+			$io->writeln('Looking for supported files in ' . $target);
 			$targetFilepaths = $filesystem->getFilepaths($target, $extensions, $recursive);
-			$output->writeln('Files found: ' . count($targetFilepaths));
+			$io->writeln('Files found: ' . count($targetFilepaths));
 			$paths = array_merge($paths, $targetFilepaths);
 
-			if ($output->isVerbose())
+			if ($io->isVerbose())
 			{
 				foreach ($targetFilepaths as $path)
 				{
-					$output->writeln('Found ' . $path, OutputInterface::VERBOSITY_VERBOSE);
+					$io->writeln('Found ' . $path, OutputInterface::VERBOSITY_VERBOSE);
 				}
 			}
 		}
@@ -124,8 +123,7 @@ class Patch extends Command
 			$progressBar->advance();
 		}
 
-		$output->writeln('Files patched: ' . count($changed));
-
+		$io->success('Files changed: ' . count($changed) . ' / ' . count($paths));
 
 		return Command::SUCCESS;
 	}
