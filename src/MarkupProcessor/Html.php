@@ -7,7 +7,8 @@
 */
 namespace s9e\REPdoc\MarkupProcessor;
 
-use function preg_replace_callback;
+use const ENT_NOQUOTES;
+use function htmlspecialchars, preg_replace_callback;
 use s9e\REPdoc\EvalImplementation\EvalInterface;
 
 class Html implements MarkupProcessorInterface
@@ -21,7 +22,14 @@ class Html implements MarkupProcessorInterface
 	{
 		return preg_replace_callback(
 			'(^\\s*<pre[^>]*>\\s*<code\\s+class=["\']?language-php[^>]*>(.*?)</code>\\s*</pre>\\s*<pre[^>]*>\\s*<code[^>]*>\\K.*?(\\n?[ \\t]*</code>\\s*</pre>))ms',
-			fn (array $m) => rtrim($eval($m[1]), "\n") . $m[2],
+			function (array $m) use ($eval)
+			{
+				$php    = html_entity_decode($m[1], ENT_HTML5 | ENT_QUOTES);
+				$output = rtrim($eval($php), "\n");
+				$html   = htmlspecialchars($output, ENT_NOQUOTES);
+
+				return $html . $m[2];
+			},
 			$text
 		);
 	}
