@@ -21,7 +21,7 @@ class Markdown implements MarkupProcessorInterface
 	{
 		return preg_replace_callback(
 			'(^(```+|~~~+)php\\n((?:(?!\\1)\\N*\\n)*+)\\1\\n((?1))\\w*\\n\\K.*?^\\3(?!\\N))ms',
-			fn (array $m) => $eval($m[2]) . "\n" . $m[3],
+			fn (array $m) => rtrim($eval($m[2]), "\n") . "\n" . $m[3],
 			$text
 		);
 	}
