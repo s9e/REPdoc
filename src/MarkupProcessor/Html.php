@@ -7,8 +7,8 @@
 */
 namespace s9e\REPdoc\MarkupProcessor;
 
-use const ENT_NOQUOTES;
-use function htmlspecialchars, preg_replace_callback;
+use const ENT_HTML5, ENT_NOQUOTES, ENT_QUOTES;
+use function html_entity_decode, htmlspecialchars, preg_replace_callback, rtrim;
 use s9e\REPdoc\EvalImplementation\EvalInterface;
 
 class Html implements MarkupProcessorInterface

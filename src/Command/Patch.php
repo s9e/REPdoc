@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\PhpProcess;
+use function class_exists;
 use s9e\REPdoc\EvalImplementation\NativeEval;
 use s9e\REPdoc\EvalImplementation\SymfonyProcess;
 use s9e\REPdoc\Filesystem;

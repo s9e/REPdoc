@@ -7,7 +7,7 @@
 */
 namespace s9e\REPdoc\MarkupProcessor;
 
-use function preg_replace_callback;
+use function preg_replace_callback, rtrim;
 use s9e\REPdoc\EvalImplementation\EvalInterface;
 
 class Markdown implements MarkupProcessorInterface
