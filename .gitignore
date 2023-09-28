@@ -1,3 +1,4 @@
 /.*
-/bin/box.phar
+/phpunit.xml
+/tests
 /vendor
