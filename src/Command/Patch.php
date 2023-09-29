@@ -86,7 +86,7 @@ class Patch extends Command
 		$repository->addProcessor(new Markdown);
 
 		$extensions = $repository->getSupportedFileExtensions();
-		$io->writeln('Supported file extensions: ' . implode(', ', $extensions), OutputInterface::VERBOSITY_VERBOSE);
+		$io->writeln('Supported file extensions: ' . implode(', ', $extensions));
 
 		$paths = [];
 		foreach ($targets as $target)
@@ -96,17 +96,17 @@ class Patch extends Command
 			$io->writeln('Files found: ' . count($targetFilepaths));
 			$paths = array_merge($paths, $targetFilepaths);
 
-			if ($io->isVerbose())
+			foreach ($targetFilepaths as $path)
 			{
-				foreach ($targetFilepaths as $path)
-				{
-					$io->writeln('Found ' . $path, OutputInterface::VERBOSITY_VERBOSE);
-				}
+				$io->writeln('Found ' . $path, OutputInterface::VERBOSITY_VERBOSE);
 			}
 		}
 
 		$infoSection = $output->section();
-		$infoSection->setMaxHeight(1);
+		if (!$io->isVerbose())
+		{
+			$infoSection->setMaxHeight(1);
+		}
 
 		$progressSection = $output->section();
 		$progressBar     = new ProgressBar($progressSection);
