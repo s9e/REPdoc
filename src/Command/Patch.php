@@ -75,7 +75,7 @@ class Patch extends Command
 
 		$eval       = $processIsolation ? new SymfonyProcess : new NativeEval;
 		$filesystem = new Filesystem;
-		$repository = new MarkupProcessorRepository;;
+		$repository = new MarkupProcessorRepository;
 		$patcher    = new Patcher(
 			evalImplementation:  $eval,
 			filesystem:          $filesystem,
