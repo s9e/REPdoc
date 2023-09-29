@@ -7,45 +7,22 @@
 */
 namespace s9e\REPdoc;
 
-use InvalidArgumentException;
-use const SORT_NUMERIC;
-use function array_keys, end, ksort, usort;
+use function array_keys;
 use s9e\REPdoc\MarkupProcessor\MarkupProcessorInterface;
 
 class MarkupProcessorRepository
 {
 	/**
-	* @var array<string, MarkupProcessorInterface> Processor for each supported file extension
+	* @var array<string, MarkupProcessorInterface>
 	*/
 	protected array $processors = [];
 
-	/**
-	* @param MarkupProcessorInterface[] $processors
-	*/
-	public function __construct(array $processors)
+	public function addProcessor(MarkupProcessorInterface $processor): void
 	{
-		$filetypes = [];
-		foreach ($processors as $processor)
+		foreach ($processor->getSupportedFileExtensions() as $ext)
 		{
-			if (!($processor instanceof MarkupProcessorInterface))
-			{
-				throw new InvalidArgumentException('Cannot use ' . $processor::class . ' as a markup processor');
-			}
-
-			foreach ($processor->getSupportedFileExtensions() as $ext => $score)
-			{
-				$filetypes[$ext][$score] = $processor;
-			}
+			$this->processors[$ext] = $processor;
 		}
-
-		foreach ($filetypes as $ext => $processors)
-		{
-			// Sort processors by score ascending, then grab the last one
-			ksort($processors, SORT_NUMERIC);
-
-			$this->processors[$ext] = end($processors);
-		}
-		ksort($this->processors);
 	}
 
 	public function getProcessorForFileExtension(string $ext): MarkupProcessorInterface|false
