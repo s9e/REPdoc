@@ -7,7 +7,8 @@
 */
 namespace s9e\REPdoc;
 
-use function array_keys;
+use const SORT_STRING;
+use function array_keys, sort;
 use s9e\REPdoc\MarkupProcessor\MarkupProcessorInterface;
 
 class MarkupProcessorRepository
@@ -25,9 +26,9 @@ class MarkupProcessorRepository
 		}
 	}
 
-	public function getProcessorForFileExtension(string $ext): MarkupProcessorInterface|false
+	public function getProcessorForFileExtension(string $ext): ?MarkupProcessorInterface
 	{
-		return $this->processors[$ext] ?? false;
+		return $this->processors[$ext] ?? null;
 	}
 
 	/**
@@ -35,6 +36,9 @@ class MarkupProcessorRepository
 	*/
 	public function getSupportedFileExtensions(): array
 	{
-		return array_keys($this->processors);
+		$extensions = array_keys($this->processors);
+		sort($extensions, SORT_STRING);
+
+		return $extensions;
 	}
 }

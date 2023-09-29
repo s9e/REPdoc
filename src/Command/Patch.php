@@ -75,12 +75,15 @@ class Patch extends Command
 
 		$eval       = $processIsolation ? new SymfonyProcess : new NativeEval;
 		$filesystem = new Filesystem;
-		$repository = new MarkupProcessorRepository([new Html, new Markdown]);
+		$repository = new MarkupProcessorRepository;;
 		$patcher    = new Patcher(
 			evalImplementation:  $eval,
 			filesystem:          $filesystem,
 			processorRepository: $repository
 		);
+
+		$repository->addProcessor(new Html);
+		$repository->addProcessor(new Markdown);
 
 		$extensions = $repository->getSupportedFileExtensions();
 		$io->writeln('Supported file extensions: ' . implode(', ', $extensions), OutputInterface::VERBOSITY_VERBOSE);

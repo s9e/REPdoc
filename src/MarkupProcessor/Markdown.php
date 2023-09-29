@@ -14,7 +14,7 @@ class Markdown implements MarkupProcessorInterface
 {
 	public function getSupportedFileExtensions(): array
 	{
-		return ['md' => 0];
+		return ['md'];
 	}
 
 	public function process(string $text, EvalInterface $eval): string

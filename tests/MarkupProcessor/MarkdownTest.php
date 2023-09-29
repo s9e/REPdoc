@@ -16,6 +16,6 @@ class MarkdownTest extends AbstractMarkupProcessorTestCase
 
 	public function testSupportsFileExtension()
 	{
-		$this->assertArrayHasKey('md', (new Markdown)->getSupportedFileExtensions());
+		$this->assertContains('md', (new Markdown)->getSupportedFileExtensions());
 	}
 }

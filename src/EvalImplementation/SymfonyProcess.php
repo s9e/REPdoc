@@ -9,40 +9,28 @@ namespace s9e\REPdoc\EvalImplementation;
 
 use RuntimeException;
 use Symfony\Component\Process\PhpProcess;
-use function file_exists, realpath, var_export;
+use const DIRECTORY_SEPARATOR;
+use function file_exists, get_included_files, realpath, str_ends_with, var_export;
 
 class SymfonyProcess implements EvalInterface
 {
 	public function __invoke(string $code): string
 	{
-		// Try to locate autoload.php so we can include it before any code
-		$path = $this->getAutoloadPath();
-		if ($path)
+		// Try to grab Composer's autoload.php from the list of included files
+		$suffix = DIRECTORY_SEPARATOR . 'autoload.php';
+		foreach (get_included_files() as $filepath)
 		{
-			$code = 'include ' . var_export($path, true) . ";\n" . $code;
-		}
+			if (str_ends_with($filepath, $suffix))
+			{
+				$code = 'include ' . var_export($filepath, true) . ";\n" . $code;
 
+				break;
+			}
+		}
 
 		$process = new PhpProcess("<?php\n" . $code);
 		$process->mustRun();
 
 		return $process->getOutput();
-	}
-
-	protected function getAutoloadPath(): ?string
-	{
-		$paths = [
-			__DIR__ . '/../../vendor/autoload.php',
-			__DIR__ . '/../../autoload.php'
-		];
-		foreach ($paths as $path)
-		{
-			if (file_exists($path))
-			{
-				return realpath($path);
-			}
-		}
-
-		return null;
 	}
 }

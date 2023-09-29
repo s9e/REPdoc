@@ -12,11 +12,9 @@ use s9e\REPdoc\EvalImplementation\EvalInterface;
 interface MarkupProcessorInterface
 {
 	/**
-	* Return the list of supported file extensions and their score
+	* Return the list of file extensions supported by this processor
 	*
-	* A higher score means this processor is better suited for handling this type of files
-	*
-	* @return array<string, int>
+	* @return string[]
 	*/
 	public function getSupportedFileExtensions(): array;
 

@@ -15,7 +15,7 @@ class Html implements MarkupProcessorInterface
 {
 	public function getSupportedFileExtensions(): array
 	{
-		return ['html' => 0];
+		return ['html'];
 	}
 
 	public function process(string $text, EvalInterface $eval): string

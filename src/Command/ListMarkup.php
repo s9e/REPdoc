@@ -25,7 +25,9 @@ class ListMarkup extends Command
 	{
 		$io = new SymfonyStyle($input, $output);
 
-		$repository = new MarkupProcessorRepository([new Html, new Markdown]);
+		$repository = new MarkupProcessorRepository;
+		$repository->addProcessor(new Html);
+		$repository->addProcessor(new Markdown);
 
 		$extensions = $repository->getSupportedFileExtensions();
 		sort($extensions, SORT_STRING);

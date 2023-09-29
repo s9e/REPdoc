@@ -16,6 +16,6 @@ class HtmlTest extends AbstractMarkupProcessorTestCase
 
 	public function testSupportsFileExtension()
 	{
-		$this->assertArrayHasKey('html', (new Html)->getSupportedFileExtensions());
+		$this->assertContains('html', (new Html)->getSupportedFileExtensions());
 	}
 }

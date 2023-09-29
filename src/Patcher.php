@@ -27,7 +27,7 @@ class Patcher
 	{
 		$ext       = $this->filesystem->getFileExtension($path);
 		$processor = $this->processorRepository->getProcessorForFileExtension($ext);
-		if ($processor === false)
+		if (!isset($processor))
 		{
 			return false;
 		}
