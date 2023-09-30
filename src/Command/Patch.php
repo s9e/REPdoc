@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\PhpProcess;
-use function array_merge, class_exists, count, implode;
+use function array_merge, class_exists, count, get_class, implode;
 use s9e\REPdoc\EvalImplementation\NativeEval;
 use s9e\REPdoc\EvalImplementation\SymfonyProcess;
 use s9e\REPdoc\Filesystem;
@@ -87,6 +87,19 @@ class Patch extends Command
 
 		$extensions = $repository->getSupportedFileExtensions();
 		$io->writeln('Supported file extensions: ' . implode(', ', $extensions));
+		if ($io->isVerbose())
+		{
+			$rows = [];
+			foreach ($extensions as $ext)
+			{
+				$rows[] = [$ext, get_class($repository->getProcessorForFileExtension($ext))];
+			}
+
+			$io->table(
+				['File extension', 'Markup processor class'],
+				$rows
+			);
+		}
 
 		$paths = [];
 		foreach ($targets as $target)
