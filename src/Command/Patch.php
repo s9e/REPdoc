@@ -13,6 +13,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Process\PhpProcess;
@@ -95,28 +96,23 @@ class Patch extends Command
 			}
 		}
 
-		$infoSection = $output->section();
-		if (!$this->io->isVeryVerbose())
-		{
-			$infoSection->setMaxHeight(1);
-		}
-
-		$progressSection = $output->section();
-		$progressBar     = new ProgressBar($progressSection);
+		$infoOutput     = $this->getInfoOutput($output);
+		$progressOutput = $this->getProgressOutput($output);
+		$progressBar    = new ProgressBar($progressOutput);
 		$progressBar->start(count($paths));
 
 		$changed = [];
 		foreach ($paths as $path)
 		{
-			$infoSection->writeln('Patching ' . $path);
+			$infoOutput->writeln('Patching ' . $path);
 			if ($this->patcher->patchFile($path))
 			{
 				$changed[] = $path;
-				$infoSection->writeln('Updated ' . $path, OutputInterface::VERBOSITY_VERBOSE);
+				$infoOutput->writeln('Updated ' . $path, OutputInterface::VERBOSITY_VERBOSE);
 			}
 			else
 			{
-				$infoSection->writeln('Skipped ' . $path, OutputInterface::VERBOSITY_VERBOSE);
+				$infoOutput->writeln('Skipped ' . $path, OutputInterface::VERBOSITY_VERBOSE);
 			}
 			$progressBar->advance();
 		}
@@ -124,15 +120,6 @@ class Patch extends Command
 		$this->io->success('Files changed: ' . count($changed) . ' / ' . count($paths));
 
 		return Command::SUCCESS;
-	}
-
-	protected function getMarkupProcessorRepository(): MarkupProcessorRepository
-	{
-		$repository = new MarkupProcessorRepository;
-		$repository->addProcessor(new Html);
-		$repository->addProcessor(new Markdown);
-
-		return $repository;
 	}
 
 	protected function getEvalImplementation(bool $processIsolation): EvalInterface
@@ -145,6 +132,36 @@ class Patch extends Command
 		}
 
 		return $processIsolation ? new SymfonyProcess : new NativeEval;
+	}
+
+	protected function getInfoOutput(OutputInterface $output): OutputInterface
+	{
+		if ($output instanceof ConsoleOutputInterface)
+		{
+			$infoOutput = $output->section();
+			if (!$this->io->isVeryVerbose())
+			{
+				$infoOutput->setMaxHeight(1);
+			}
+
+			return $infoOutput;
+		}
+
+		return $output;
+	}
+
+	protected function getMarkupProcessorRepository(): MarkupProcessorRepository
+	{
+		$repository = new MarkupProcessorRepository;
+		$repository->addProcessor(new Html);
+		$repository->addProcessor(new Markdown);
+
+		return $repository;
+	}
+
+	protected function getProgressOutput(OutputInterface $output): OutputInterface
+	{
+		return ($output instanceof ConsoleOutputInterface) ? $output->section() : $output;
 	}
 
 	protected function printSupportedFileExtensions(array $extensions): void
