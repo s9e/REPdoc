@@ -75,7 +75,10 @@ class Patch extends Command
 
 		// Gather/display the list of supported files
 		$extensions = $this->repository->getSupportedFileExtensions();
-		$this->printSupportedFileExtensions($extensions);
+		if ($this->io->isVerbose())
+		{
+			$this->printSupportedFileExtensions($extensions);
+		}
 
 		// Collect the list of supported files among targets
 		$paths = [];
@@ -146,19 +149,15 @@ class Patch extends Command
 
 	protected function printSupportedFileExtensions(array $extensions): void
 	{
-		$this->io->writeln('Supported file extensions: ' . implode(', ', $extensions), OutputInterface::VERBOSITY_VERBOSE);
-		if ($this->io->isVeryVerbose())
+		$rows = [];
+		foreach ($extensions as $ext)
 		{
-			$rows = [];
-			foreach ($extensions as $ext)
-			{
-				$rows[] = [$ext, get_class($this->repository->getProcessorForFileExtension($ext))];
-			}
-
-			$this->io->table(
-				['File extension', 'Markup processor class'],
-				$rows
-			);
+			$rows[] = [$ext, get_class($this->repository->getProcessorForFileExtension($ext))];
 		}
+
+		$this->io->table(
+			['File extension', 'Markup processor class'],
+			$rows
+		);
 	}
 }
