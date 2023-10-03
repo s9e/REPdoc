@@ -3,14 +3,31 @@
 namespace s9e\REPdoc\Tests\EvalImplementation;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use s9e\REPdoc\EvalImplementation\EvalInterface;
+use s9e\REPdoc\Exception\EvalException;
 
-#[DoesNotPerformAssertions]
 abstract class AbstractEvalTestCase extends TestCase
 {
 	abstract protected function getEvalImplementation(): EvalInterface;
+
+	public function testExceptionIsThrownOnInvalidCode()
+	{
+		$this->expectException(EvalException::class);
+		$this->getEvalImplementation()('substr();');
+	}
+
+	public function testExceptionHasSourceCode()
+	{
+		try
+		{
+			$this->getEvalImplementation()('substr();');
+		}
+		catch (EvalException $e)
+		{
+			$this->assertStringContainsString('substr();', $e->getSourceCode());
+		}
+	}
 
 	#[DataProvider('getSuccesfulEvalTests')]
 	public function testEval(string $code, string $expected)

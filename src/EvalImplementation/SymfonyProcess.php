@@ -7,10 +7,11 @@
 */
 namespace s9e\REPdoc\EvalImplementation;
 
-use RuntimeException;
 use Symfony\Component\Process\PhpProcess;
+use Throwable;
 use const DIRECTORY_SEPARATOR;
 use function file_exists, get_included_files, realpath, str_ends_with, var_export;
+use s9e\REPdoc\Exception\EvalException;
 
 class SymfonyProcess implements EvalInterface
 {
@@ -28,8 +29,18 @@ class SymfonyProcess implements EvalInterface
 			}
 		}
 
-		$process = new PhpProcess("<?php\n" . $code);
-		$process->mustRun();
+		try
+		{
+			$process = new PhpProcess("<?php\n" . $code);
+			$process->mustRun();
+		}
+		catch (Throwable $previous)
+		{
+			$evalException = new EvalException(previous: $previous);
+			$evalException->setSourceCode($code);
+
+			throw $evalException;
+		}
 
 		return $process->getOutput();
 	}

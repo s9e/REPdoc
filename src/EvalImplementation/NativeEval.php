@@ -7,8 +7,9 @@
 */
 namespace s9e\REPdoc\EvalImplementation;
 
-use ParseError ;
+use Throwable;
 use function ob_get_clean, ob_start;
+use s9e\REPdoc\Exception\EvalException;
 
 class NativeEval implements EvalInterface
 {
@@ -18,6 +19,13 @@ class NativeEval implements EvalInterface
 		{
 			ob_start();
 			eval($code);
+		}
+		catch (Throwable $previous)
+		{
+			$evalException = new EvalException(previous: $previous);
+			$evalException->setSourceCode($code);
+
+			throw $evalException;
 		}
 		finally
 		{

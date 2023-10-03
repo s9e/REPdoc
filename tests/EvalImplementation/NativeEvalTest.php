@@ -13,10 +13,4 @@ class NativeEvalTest extends AbstractEvalTestCase
 	{
 		return new NativeEval;
 	}
-
-	public function testError()
-	{
-		$this->expectException('ArgumentCountError');
-		$this->getEvalImplementation()('substr();');
-	}
 }

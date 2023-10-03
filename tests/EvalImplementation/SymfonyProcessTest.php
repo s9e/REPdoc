@@ -14,10 +14,4 @@ class SymfonyProcessTest extends AbstractEvalTestCase
 	{
 		return new SymfonyProcess;
 	}
-
-	public function testError()
-	{
-		$this->expectException(ProcessFailedException::class);
-		$this->getEvalImplementation()('substr();');
-	}
 }

@@ -71,6 +71,28 @@ class PatcherTest extends TestCase
 					]
 				]
 			],
+			[
+				[
+					'foo.md' => [
+						'..
+
+						```php
+						echo "Hello world.";
+						```
+						```plain
+						Hello world.
+						```',
+						'..
+
+						```php
+						echo "Hello world.";
+						```
+						```plain
+						Hello world.
+						```'
+					]
+				]
+			],
 		];
 	}
 }
