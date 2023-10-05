@@ -9,15 +9,7 @@ use s9e\REPdoc\Exception\EvalException;
 #[CoversClass('s9e\REPdoc\Exception\EvalException')]
 class EvalExceptionTest extends TestCase
 {
-	public function testSetSourceCode(): void
-	{
-		$e = new EvalException;
-		$e->setSourceCode('echo $x;');
-
-		$this->assertEquals('echo $x;', $e->sourceCode);
-	}
-
-	public function testGetSourceCode(): void
+	public function testSourceCode(): void
 	{
 		$e = new EvalException;
 		$e->setSourceCode('echo $x;');
