@@ -9,6 +9,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use org\bovigo\vfs\vfsStream;
 use s9e\REPdoc\Command\Patch;
+use s9e\REPdoc\Tests\Stubs\PatchProxy;
 
 #[CoversClass('s9e\REPdoc\Command\Patch')]
 class PatchTest extends TestCase
@@ -22,27 +23,55 @@ class PatchTest extends TestCase
 		$commandTester->execute([]);
 	}
 
+	public function testRequiresSymfonyProcess()
+	{
+		$command = new PatchProxy;
+		$command->setSymfonyProcess(false);
+
+		$commandTester = new CommandTester($command);
+		$commandTester->execute([
+			'--process-isolation' => true,
+			'targets'             => []
+		]);
+
+		$this->assertEquals($command::FAILURE, $commandTester->getStatusCode());
+	}
+
 	#[DataProvider('getExecuteTests')]
 	public function testExecute(array $originalFiles, array $expectedFiles, array $targets = null): void
 	{
 		vfsStream::setup('root');
-		chdir('root');
 		foreach ($originalFiles as $path => $contents)
 		{
-			file_put_contents($path, $contents);
+			$url = vfsStream::url('root/' . $path);
+			file_put_contents($url, $contents);
 		}
 
-		$targets ??= array_keys($originalFiles);
+		$targets = array_map(
+			fn($path) => vfsStream::url('root/' . $path),
+			$targets ?? array_keys($originalFiles)
+		);
 
 		$commandTester = new CommandTester(new Patch);
 		$commandTester->execute([
 			'targets' => $targets
 		]);
+		foreach ($expectedFiles as $path => $contents)
+		{
+			$url = vfsStream::url('root/' . $path);
+			$this->assertStringEqualsFile($url, $contents);
+		}
+
+		$commandTester->assertCommandIsSuccessful();
 	}
 
-	public function getExecuteTests(): array
+	public static function getExecuteTests(): array
 	{
 		return [
+			[
+				['foo.md' => '...'],
+				['foo.md' => '...']
+			],
 		];
 	}
 }

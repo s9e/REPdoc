@@ -65,7 +65,14 @@ class Patch extends Command
 		$targets          = (array) $input->getArgument('targets');
 		$processIsolation = (bool) $input->getOption('process-isolation');
 
-		$this->eval       = $this->getEvalImplementation($processIsolation);
+		if ($processIsolation && !$this->hasSymfonyProcess)
+		{
+			$this->io->error('Cannot use process isolation, make sure symfony/process is installed');
+
+			return Command::FAILURE;
+		}
+
+		$this->eval       = $processIsolation ? new SymfonyProcess : new NativeEval;
 		$this->filesystem = new Filesystem;
 		$this->repository = $this->getMarkupProcessorRepository();
 		$this->patcher    = new Patcher(
@@ -120,18 +127,6 @@ class Patch extends Command
 		$this->io->success('Files changed: ' . count($changed) . ' / ' . count($paths));
 
 		return Command::SUCCESS;
-	}
-
-	protected function getEvalImplementation(bool $processIsolation): EvalInterface
-	{
-		if ($processIsolation && !$this->hasSymfonyProcess)
-		{
-			$this->io->error('Cannot use process isolation, make sure symfony/process is installed');
-
-			return Command::FAILURE;
-		}
-
-		return $processIsolation ? new SymfonyProcess : new NativeEval;
 	}
 
 	protected function getInfoOutput(OutputInterface $output): OutputInterface
